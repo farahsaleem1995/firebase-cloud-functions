@@ -1,8 +1,9 @@
-import { sayHello } from "./functions.js";
 import { signUp, signIn, signOut, authListener } from "./auth.js";
+import { addRequest } from "./requests.js";
 
 const requestModal = document.querySelector(".new-request");
 const requestLink = document.querySelector(".add-request");
+const requestForm = document.querySelector(".new-request form");
 
 const authSwitchLinks = document.querySelectorAll(".switch");
 const authModals = document.querySelectorAll(".auth .modal");
@@ -11,8 +12,6 @@ const authWrapper = document.querySelector(".auth");
 const signUpForm = document.querySelector(".register");
 const signInForm = document.querySelector(".login");
 const signOutBtn = document.querySelector(".sign-out");
-
-const button = document.querySelector(".call");
 
 // open request modal
 requestLink.addEventListener("click", () => {
@@ -24,13 +23,6 @@ requestModal.addEventListener("click", (e) => {
   if (e.target.classList.contains("new-request")) {
     requestModal.classList.remove("open");
   }
-});
-
-button.addEventListener("click", (e) => {
-  console.log("Loading...");
-  sayHello({ name: "Yoshi" }, (resData) => {
-    console.log(resData);
-  });
 });
 
 // toggle auth modals
@@ -89,6 +81,24 @@ signOutBtn.addEventListener("click", (e) => {
   );
 });
 
+requestForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const requestTxt = requestForm["request"].value;
+  addRequest(
+    { text: requestTxt },
+    (data) => {
+      console.log(data);
+      requestModal.classList.remove("open");
+      requestForm.reset();
+      requestForm.querySelector(".error").textContent = "";
+    },
+    (err) => {
+      requestForm.querySelector(".error").textContent = err.message;
+    }
+  );
+});
+
 authListener(
   (user) => {
     authWrapper.classList.remove("open");
@@ -96,6 +106,6 @@ authListener(
   },
   () => {
     authWrapper.classList.add("open");
-    authModals.forEach((modal) => modal.classList.add("active"));
+    authModals[0].classList.add("active");
   }
 );

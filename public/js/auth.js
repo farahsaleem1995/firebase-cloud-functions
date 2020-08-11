@@ -26,7 +26,7 @@ export const signOut = (successCallback, errorCallback) => {
   auth
     .signOut()
     .then(() => {
-      successCallback(user);
+      successCallback();
     })
     .catch((err) => {
       errorCallback(err);
