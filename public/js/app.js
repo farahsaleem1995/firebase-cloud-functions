@@ -1,5 +1,5 @@
 import { signUp, signIn, signOut, authListener } from "./auth.js";
-import { addRequest } from "./requests.js";
+import { addRequest, requestListener, upvote } from "./requests.js";
 
 const requestModal = document.querySelector(".new-request");
 const requestLink = document.querySelector(".add-request");
@@ -12,6 +12,29 @@ const authWrapper = document.querySelector(".auth");
 const signUpForm = document.querySelector(".register");
 const signInForm = document.querySelector(".login");
 const signOutBtn = document.querySelector(".sign-out");
+
+var app = new Vue({
+  el: "#app",
+  data: {
+    requests: [],
+  },
+  methods: {
+    upvoteRequest(id) {
+      upvote(
+        id,
+        () => console.log("Upvoted"),
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+  },
+  mounted() {
+    requestListener((docs) => {
+      this.requests = docs;
+    });
+  },
+});
 
 // open request modal
 requestLink.addEventListener("click", () => {
